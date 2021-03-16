@@ -26,14 +26,15 @@ test('User can complete purchase, navigate to Finish', async t => {
 })
 
 
-test.only('Ordered items match Overview', async (t , n = 3) => {
+test('Ordered items match Overview', async (t , n = 3) => {
     t.ctx.itemCount = n;
     await loginPage.submitLoginForm(CREDENTIALS.VALID_USER.USERNAME, CREDENTIALS.VALID_USER.PASSWORD)
     await t
         .click(productsPage.item1Button)
         .click(productsPage.item2Button)
         .click(productsPage.item3Button)
-        .click(productsPage.shoppingCart)
+    t.ctx.itemCounter = await productsPage.itemCounter();
+    await t.click(productsPage.shoppingCart)
     await t
         .click(shoppingCartPage.checkoutButton)
     await t
@@ -41,5 +42,5 @@ test.only('Ordered items match Overview', async (t , n = 3) => {
         .typeText(checkoutPage.lastNameField,MAILING.LAST_NAME)
         .typeText(checkoutPage.postalField,MAILING.ZIP_CODE)
         .click(checkoutPage.continueButton)
-    await t.expect(overviewPage.itemCount.count).eql(t.ctx.itemCount)
+    await t.expect(overviewPage.itemCount.count).eql(Number(t.ctx.itemCounter.textContent))
 })
